@@ -35,7 +35,7 @@ class TestZookeeperClient(brokerIds:List[Int]) extends ZookeeperClient {
 
   override def shutdown(): Unit = ???
 
-  override def subscribeControllerChangeListner(controller: Controller): Unit = ???
+  override def subscribeControllerChangeListener(controller: Controller): Unit = ???
 }
 
 class CreateTopicCommandTest extends FunSuite {

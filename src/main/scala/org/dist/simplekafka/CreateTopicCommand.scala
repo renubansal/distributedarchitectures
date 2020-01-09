@@ -8,7 +8,7 @@ import scala.collection.{Map, Seq, mutable}
 
 case class PartitionReplicas(partitionId:Int, brokerIds:List[Int])
 
-class CreateTopicCommand(zookeeperClient:ZookeeperClient, partitionAssigner:ReplicaAssignmentStrategy = new ReplicaAssignmentStrategy()) {
+class CreateTopicCommand(zookeeperClient:ZookeeperClient) {
   val rand = new Random
 
   def createTopic(topicName:String, noOfPartitions:Int, replicationFactor:Int) = {

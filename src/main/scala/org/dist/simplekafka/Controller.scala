@@ -14,7 +14,7 @@ class Controller(val zookeeperClient: ZookeeperClient, val brokerId: Int, socket
   var liveBrokers: Set[Broker] = Set()
   var currentLeader = -1
   def startup(): Unit = {
-    zookeeperClient.subscribeControllerChangeListner(this)
+    zookeeperClient.subscribeControllerChangeListener(this)
     elect()
   }
 

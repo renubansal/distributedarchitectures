@@ -24,7 +24,7 @@ trait ZookeeperClient {
   def getPartitionAssignmentsFor(topicName: String): List[PartitionReplicas]
   def subscribeTopicChangeListener(listener: IZkChildListener): Option[List[String]]
   def subscribeBrokerChangeListener(listener: IZkChildListener): Option[List[String]]
-  def subscribeControllerChangeListner(controller:Controller): Unit
+  def subscribeControllerChangeListener(controller:Controller): Unit
 
   def registerSelf()
   def tryCreatingControllerPath(data: String)
@@ -85,6 +85,7 @@ private[simplekafka] class ZookeeperClientImpl(config:Config) extends ZookeeperC
     Option(result).map(_.asScala.toList)
   }
 
+  // /broker/ids/1 {host: 10.0.0.1, port: 8080}
   @VisibleForTesting
   def registerBroker(broker: Broker) = {
     val brokerData = JsonSerDes.serialize(broker)
@@ -168,7 +169,7 @@ private[simplekafka] class ZookeeperClientImpl(config:Config) extends ZookeeperC
     }
   }
 
-  override def subscribeControllerChangeListner(controller:Controller): Unit = {
+  override def subscribeControllerChangeListener(controller:Controller): Unit = {
     zkClient.subscribeDataChanges(ControllerPath, new ControllerChangeListener(controller))
   }
 
