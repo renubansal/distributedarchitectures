@@ -4,7 +4,9 @@ class RenuCreateTopicCommand(client: ZooClientImpl, partitionStrategy: Partition
 
   def createTopic(topicName: String, noOfPartitions: Int, replicationFactor: Int) = {
     val brokerIds = client.getAllBrokerIds()
-    val partitionReplicas = partitionStrategy.assignReplicasToBrokers(brokerIds, noOfPartitions, replicationFactor)
+    val partitionReplicas = partitionStrategy.assignReplicasToBrokers(
+      brokerIds, noOfPartitions, replicationFactor)
+
     client.setPartitionReplicasForTopic(topicName, partitionReplicas)
 
   }
