@@ -46,6 +46,9 @@ class ZooClientImpl(zkClient: ZkClient) {
     zkClient.subscribeChildChanges(BROKER_ROOT_PATH, listener)
   }
 
+  def subscribeTopicChangeListener(listener: IZkChildListener): util.List[String] = {
+    zkClient.subscribeChildChanges(TOPIC_PATH, listener)
+  }
 
   def tryCreatingControllerPath(data: String): Unit = {
     try{
@@ -57,8 +60,6 @@ class ZooClientImpl(zkClient: ZkClient) {
     }
 
   }
-
-
 
   def getTopicPath(topicName: String) = {
     TOPIC_PATH + "/" + topicName

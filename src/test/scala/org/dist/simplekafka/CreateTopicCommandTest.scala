@@ -40,7 +40,7 @@ class TestZookeeperClient(brokerIds:List[Int]) extends ZookeeperClient {
   override def getPartitionReplicaLeaderInfo(topicName : String): List[LeaderAndReplicas] = ???
 
   override def getTopics(): List[String] = ???
-  override def subscribeControllerChangeListener(controller: Controller): Unit = ???
+  override def subscribeControllerChangeListner(controller: Controller): Unit = ???
 }
 
 class CreateTopicCommandTest extends FunSuite {
