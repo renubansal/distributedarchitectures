@@ -1,7 +1,7 @@
 package org.dist.experiment.kafka
 
 import org.dist.kvstore.JsonSerDes
-import org.dist.queue.api.RequestOrResponse
+import org.dist.queue.api.{RequestKeys, RequestOrResponse}
 import org.dist.queue.server.Config
 import org.dist.simplekafka.{LeaderAndReplicaRequest, ReplicaManager}
 
@@ -9,7 +9,7 @@ class RenuSimpleKafkaApi(config: Config, replicaManager: ReplicaManager) {
 
   def handle(request: RequestOrResponse): RequestOrResponse ={
     request.requestId match {
-      case 101 =>
+      case RequestKeys.LeaderAndIsrKey =>
         val leaderAndReplicaRequest = JsonSerDes.deserialize(request.messageBodyJson.getBytes(), classOf[LeaderAndReplicaRequest])
         leaderAndReplicaRequest.leaderReplicas.foreach(leaderReplica => {
           val leader = leaderReplica.partitionStateInfo.leader
@@ -22,7 +22,7 @@ class RenuSimpleKafkaApi(config: Config, replicaManager: ReplicaManager) {
           }
         })
     }
-    RequestOrResponse(101,"",request.correlationId)
+    RequestOrResponse(RequestKeys.LeaderAndIsrKey,"",request.correlationId)
   }
 
 }

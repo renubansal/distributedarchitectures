@@ -1,7 +1,7 @@
 package org.dist.experiment.kafka
 
 import org.dist.kvstore.JsonSerDes
-import org.dist.queue.api.RequestOrResponse
+import org.dist.queue.api.{RequestKeys, RequestOrResponse}
 import org.dist.queue.common.TopicAndPartition
 import org.dist.queue.server.Config
 import org.dist.queue.utils.ZkUtils.Broker
@@ -26,7 +26,7 @@ class RenuSimpleKafkaApiTest extends ZookeeperTestHarness {
     val leaderReplicaRequest = LeaderAndReplicaRequest(leaderAndReplicas)
     val correlationId = 12
 
-    val response = api.handle(RequestOrResponse(101, JsonSerDes.serialize(leaderReplicaRequest),correlationId))
+    val response = api.handle(RequestOrResponse(RequestKeys.LeaderAndIsrKey, JsonSerDes.serialize(leaderReplicaRequest),correlationId))
 
     assert(response.correlationId == correlationId)
     assert(replicaManager.allPartitions.size == 2)

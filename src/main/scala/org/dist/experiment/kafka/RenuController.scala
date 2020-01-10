@@ -3,9 +3,9 @@ package org.dist.experiment.kafka
 import java.util
 
 import org.dist.kvstore.{InetAddressAndPort, JsonSerDes}
-import org.dist.queue.api.RequestOrResponse
+import org.dist.queue.api.{RequestKeys, RequestOrResponse}
 import org.dist.queue.utils.ZkUtils.Broker
-import org.dist.simplekafka.{ControllerExistsException, LeaderAndReplicas, PartitionReplicas, SimpleSocketServer}
+import org.dist.simplekafka.{ControllerExistsException, LeaderAndReplicaRequest, LeaderAndReplicas, PartitionReplicas, SimpleSocketServer}
 
 class RenuController(client: ZooClientImpl, id: Int, socketServer: SimpleSocketServer) {
   var currentLeader = 0
@@ -49,10 +49,10 @@ class RenuController(client: ZooClientImpl, id: Int, socketServer: SimpleSocketS
         leaderReplicas.add(lr)
       })
     })
-
     val brokers = brokerToLeaderIsrRequest.keySet().asScala
     for (broker ← brokers) {
-      val request = RequestOrResponse(101, JsonSerDes.serialize("sending leader request"), 12)
+      val leaderAndReplicaRequest = LeaderAndReplicaRequest(leaderAndReplicas.toList)
+      val request = RequestOrResponse(RequestKeys.LeaderAndIsrKey, JsonSerDes.serialize(leaderAndReplicaRequest), 12)
       socketServer.sendReceiveTcp(request, InetAddressAndPort.create(broker.host, broker.port))
     }
   }
