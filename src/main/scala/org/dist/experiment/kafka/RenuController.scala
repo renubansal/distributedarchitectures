@@ -4,8 +4,9 @@ import java.util
 
 import org.dist.kvstore.{InetAddressAndPort, JsonSerDes}
 import org.dist.queue.api.{RequestKeys, RequestOrResponse}
+import org.dist.queue.common.TopicAndPartition
 import org.dist.queue.utils.ZkUtils.Broker
-import org.dist.simplekafka.{ControllerExistsException, LeaderAndReplicaRequest, LeaderAndReplicas, PartitionReplicas, SimpleSocketServer}
+import org.dist.simplekafka.{ControllerExistsException, LeaderAndReplicaRequest, LeaderAndReplicas, PartitionInfo, PartitionReplicas, SimpleSocketServer}
 
 class RenuController(client: ZooClientImpl, id: Int, socketServer: SimpleSocketServer) {
   var currentLeader = 0
@@ -31,8 +32,18 @@ class RenuController(client: ZooClientImpl, id: Int, socketServer: SimpleSocketS
     }
   }
 
-  def onTopicChange(): Unit = {
-//    sendLeaderAndFollowerInfoForGivenPartition()
+  def onTopicChange(topicName: String, partitionReplicas: Seq[PartitionReplicas]): Unit = {
+    val leaderAndReplicas: Seq[LeaderAndReplicas] = selectLeaderAndFollowerForPartition(topicName, partitionReplicas)
+    sendLeaderAndFollowerInfoForGivenPartition(leaderAndReplicas, partitionReplicas)
+  }
+
+  def selectLeaderAndFollowerForPartition(topicName: String, partitionReplicas: Seq[PartitionReplicas]) ={
+    val leaderAndReplicas: Seq[LeaderAndReplicas] = partitionReplicas.map(partitionReplica => {
+      val leader = client.getBrokerInfo(partitionReplica.brokerIds.head)
+      val followers = partitionReplica.brokerIds.tail.map(id => client.getBrokerInfo(id))
+      LeaderAndReplicas(new TopicAndPartition(topicName, partitionReplica.partitionId), PartitionInfo(leader, followers))
+    })
+    leaderAndReplicas
   }
 
   import scala.jdk.CollectionConverters._

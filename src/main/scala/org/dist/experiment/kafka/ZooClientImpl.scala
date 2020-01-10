@@ -26,6 +26,11 @@ class ZooClientImpl(zkClient: ZkClient) {
     zkClient.getChildren(BROKER_ROOT_PATH).asScala.map(_.toInt).toList
   }
 
+  def getBrokerInfo(brokerId: Int): Broker = {
+    val data: String = zkClient.readData(getBrokerPath(brokerId))
+    JsonSerDes.deserialize(data.getBytes, classOf[Broker])
+  }
+
   def createEphemeralPath(zkClient: ZkClient, path: String, data: String): Unit = {
     try {
       zkClient.createEphemeral(path, data)
