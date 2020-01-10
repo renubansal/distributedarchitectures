@@ -2,16 +2,19 @@ package org.dist.experiment.kafka
 
 import org.dist.queue.{TestUtils, ZookeeperTestHarness}
 import org.dist.queue.utils.ZkUtils.Broker
+import org.dist.simplekafka.PartitionReplicas
 
 class RenuTopicChangeHandlerTest extends ZookeeperTestHarness {
 
   test("test Handle Child Change") {
     val client = new ZooClientImpl(zkClient)
-    val onTopicChange: () => Unit = () => {
+    def onTopicChange(topicName: String, paritionReplicas: Seq[PartitionReplicas]) = {
       print("topic changed")
     }
 
-    val topicChangeHandler = new RenuTopicChangeHandler(client,onTopicChange)
+    val topicChangeHandler = {
+      new RenuTopicChangeHandler(client, onTopicChange)
+    }
 
     client.subscribeTopicChangeListener(topicChangeHandler)
     client.registerBroker(Broker(1,"10.0.0.1",8080))
